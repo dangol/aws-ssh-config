@@ -117,24 +117,6 @@ def main():
 
             counts_total[instance_id] += 1
 
-            if args.user:
-                amis[instance.image_id] = args.user
-            else:
-                if not instance.image_id in amis:
-                    image = conn.get_image(instance.image_id)
-
-                    for ami, user in AMI_NAMES_TO_USER.iteritems():
-                        regexp = re.compile(ami)
-                        if image and regexp.match(image.name):
-                            amis[instance.image_id] = user
-                            break
-
-                    if instance.image_id not in amis:
-                        amis[instance.image_id] = args.default_user
-                        if args.default_user is None:
-                            image_label = image.name if image is not None else instance.image_id
-                            sys.stderr.write('Can\'t lookup user for AMI \'' + image_label + '\', add a rule to the script\n')
-
     for k in sorted(instances):
         for instance in instances[k]:
             if args.private:
@@ -162,30 +144,6 @@ def main():
                 print '# id: ' + instance.id
             print 'Host ' + hostid
             print '    HostName ' + ip_addr
-
-            try:
-                if amis[instance.image_id] is not None:
-                    print '    User ' + amis[instance.image_id]
-            except:
-                pass
-
-            if args.keydir:
-                keydir = args.keydir
-            else:
-                keydir = '~/.ssh/'
-
-            if args.ssh_key_name:
-                print '    IdentityFile ' + keydir + args.ssh_key_name + '.pem'
-            else:
-                key_name = AMI_IDS_TO_KEY.get(instance.image_id, instance.key_name)
-
-                print '    IdentityFile ' + keydir + key_name.replace(' ', '_') + '.pem'
-
-            if not args.no_identities_only:
-                # ensure ssh-agent keys don't flood when we know the right file to use
-                print '    IdentitiesOnly yes'
-            if not args.strict_hostkey_checking:
-                print '    StrictHostKeyChecking no'
             print
 
 
