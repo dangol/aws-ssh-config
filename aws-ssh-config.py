@@ -6,22 +6,13 @@ import sys
 import time
 import boto.ec2
 
+# example Run: python awsssh.py --private --white-list-region us-west-2 --tags Name
 
-AMI_NAMES_TO_USER = {
-    'amzn' : 'ec2-user',
-    'ubuntu' : 'ubuntu',
-    'CentOS' : 'root',
-    'DataStax' : 'ubuntu',
-    'CoreOS' : 'core'
-}
-
-AMI_IDS_TO_USER = {
-    'ami-ada2b6c4' : 'ubuntu'
-}
-
-AMI_IDS_TO_KEY = {
-    'ami-ada2b6c4' : 'custom_key'
-}
+KeyForwarders = [
+     'ossec',
+     'ossec-test',
+     'deployr'
+]
 
 BLACKLISTED_REGIONS = [
     'cn-north-1',
@@ -77,8 +68,7 @@ def main():
     instances = {}
     counts_total = {}
     counts_incremental = {}
-    amis = AMI_IDS_TO_USER.copy()
-
+    
     print "# Generated on " + time.asctime(time.localtime(time.time()))
     print "# " + " ".join(sys.argv)
     print "# "
@@ -141,11 +131,14 @@ def main():
             hostid = hostid.replace(' ', '_') # get rid of spaces
 
             if instance.id:
+                if hostid == 'bastion':
+                  continue
                 print '# id: ' + instance.id
             print 'Host ' + hostid
-            print '    HostName ' + ip_addr
+            print '  HostName ' + ip_addr
+            if hostid in KeyForwarders:
+                print '  ForwardAgent yes'
             print
-
 
 if __name__ == '__main__':
     main()
