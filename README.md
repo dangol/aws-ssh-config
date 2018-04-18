@@ -56,138 +56,14 @@ optional arguments:
 By default, it will name hosts by concatenating all tags:
 
 ```
-gianluca@sid:~$ python aws-ssh-config.py > ~/.ssh/config
-gianluca@sid:~$ cat ~/.ssh/config
+dan@bastion-test:~$ python awsssh.py --private --white-list-region us-west-2 --tags Name > ~/.ssh/config or /etc/ssh/ssh_config
+dan@bastion-test:~$ cat ~/.ssh/config
 Host dev-worker-1
-    HostName 54.173.109.173
-    User ec2-user
-    IdentityFile ~/.ssh/dev.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
+  HostName 172.2.3.1
+    
 Host dev-worker-2
-    HostName 54.173.190.141
-    User ec2-user
-    IdentityFile ~/.ssh/dev.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host prod-worker-1
-    HostName 54.164.168.30
-    User ec2-user
-    IdentityFile ~/.ssh/prod.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host prod-worker-2
-    HostName 54.174.115.242
-    User ubuntu
-    IdentityFile ~/.ssh/prod.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-```
-
-ssh completion will immediately work:
-
-```
-gianluca@sid:~$ ssh d[TAB]
-dev-worker-1
-dev-worker-2
-```
-If the ssh completion will not immediately work you should add the following script to your `.bash_profile`
-
-```
-_complete_ssh_hosts ()
-{
-        COMPREPLY=()
-        cur="${COMP_WORDS[COMP_CWORD]}"
-        comp_ssh_hosts=`cat ~/.ssh/known_hosts | \
-                        cut -f 1 -d ' ' | \
-                        sed -e s/,.*//g | \
-                        grep -v ^# | \
-                        uniq | \
-                        grep -v "\[" ;
-                cat ~/.ssh/config | \
-                        grep "^Host " | \
-                        awk '{print $2}'
-                `
-        COMPREPLY=( $(compgen -W "${comp_ssh_hosts}" -- $cur))
-        return 0
-}
-complete -F _complete_ssh_hosts ssh
-```
-and run `gianluca@sid:~$ source .bash_profile` 
-
-It's possible to customize which tags one is interested in, as well as the order used for concatenation:
-
-```
-gianluca@sid:~$ python aws-ssh-config.py --tags Name > ~/.ssh/config
-gianluca@sid:~$ cat ~/.ssh/config
-Host worker-1
-    HostName 54.173.109.173
-    User ec2-user
-    IdentityFile ~/.ssh/dev.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host worker-2
-    HostName 54.173.190.141
-    User ec2-user
-    IdentityFile ~/.ssh/dev.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host worker-3
-    HostName 54.164.168.30
-    User ec2-user
-    IdentityFile ~/.ssh/prod.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host worker-4
-    HostName 54.174.115.242
-    User ubuntu
-    IdentityFile ~/.ssh/prod.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-gianluca@sid:~$ python aws-ssh-config.py --tags Name,Infrastructure > ~/.ssh/config
-gianluca@sid:~$ cat ~/.ssh/config
-Host worker-dev-1
-    HostName 54.173.109.173
-    User ec2-user
-    IdentityFile ~/.ssh/dev.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host worker-dev-2
-    HostName 54.173.190.141
-    User ec2-user
-    IdentityFile ~/.ssh/dev.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host worker-prod-1
-    HostName 54.164.168.30
-    User ec2-user
-    IdentityFile ~/.ssh/prod.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-Host worker-prod-2
-    HostName 54.174.115.242
-    User ubuntu
-    IdentityFile ~/.ssh/prod.pem
-    IdentitiesOnly yes
-    StrictHostKeyChecking no
-
-```
-
-By default, the ssh user is calculated from a regular expression based on the AMI name. A default user can be set with `--default-user` to use if no matches are found, otherwise a warning is printed on standard error and one can edit the script and add the rule to the `AMIS_TO_USER` dictionary:
-
-```
-gianluca@sid:~$ python aws-ssh-config.py > ~/.ssh/config
-Can't lookup user for AMI 'ubuntu/images/hvm-ssd/ubuntu-trusty-14.04-amd64-server-20140926', add a rule to the script
-```
-
-The `--user` param can also be used to use a single username for all hosts.
+  HostName 172.2.3.2
+    
+Host deployr
+  HostName 172.2.3.3
+  ForwardAgent yes
