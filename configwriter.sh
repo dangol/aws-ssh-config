@@ -4,10 +4,8 @@ AZ=$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone
 TODAY=$(date +%F-%H)
 LNK=$(readlink -f /etc/ssh/ssh_config)
 /usr/local/bin/awsssh.py --private --white-list-region ${AZ:0:-1} --tags Name | tee /etc/ssh/${TODAY}_config > /dev/null
-RES=$(cmp -s /etc/ssh/${TODAY}_config /etc/ssh/ssh_config )
-if [ "$?" == 0 ]; then
-	rm /etc/ssh/${TODAY}_config
-else
-  ln -s /etc/ssh/${TODAY}_config /etc/ssh/ssh_config;
+RES=$(cmp -s /etc/ssh/${TODAY}_config /etc/ssh/ssh_config)
+if [ "$?" > 0 ]; then
+  ln -fs /etc/ssh/${TODAY}_config /etc/ssh/ssh_config
   rm $LNK
 fi
