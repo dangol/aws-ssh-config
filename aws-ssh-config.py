@@ -92,7 +92,7 @@ def main():
             if instance.platform == 'windows':
                 continue
 
-            if instance.vpc_id is not in args.vpc_id:
+            if instance.vpc_id not in args.vpc_id:
                 continue
 
             if instance.launch_time not in instances:
