@@ -91,8 +91,8 @@ def main():
             if instance.platform == 'windows':
                 continue
 
-            if instance.key_name is None:
-                continue
+            #if instance.key_name is None:
+            #    continue
 
             if instance.launch_time not in instances:
                 instances[instance.launch_time] = []
