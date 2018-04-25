@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+grep Host\  /etc/ssh/ssh_config | cut -d' ' -f2 | sort
