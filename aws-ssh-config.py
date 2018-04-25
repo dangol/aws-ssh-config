@@ -62,6 +62,7 @@ def main():
     parser.add_argument('--tags', help='A comma-separated list of tag names to be considered for concatenation. If omitted, all tags will be used')
     parser.add_argument('--user', help='Override the ssh username for all hosts')
     parser.add_argument('--white-list-region', default='', help='Which regions must be included. If omitted, all regions are considered', nargs="+")
+    parser.add_argument('--vpc_id', default='', help='VPCs which must be included, If omitted all VPCs are considered' , nargs="+")
 
     args = parser.parse_args()
 
@@ -91,8 +92,8 @@ def main():
             if instance.platform == 'windows':
                 continue
 
-            #if instance.key_name is None:
-            #    continue
+            if instance.vpc_id is not in args.vpc_id:
+                continue
 
             if instance.launch_time not in instances:
                 instances[instance.launch_time] = []
